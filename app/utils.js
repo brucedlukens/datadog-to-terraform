@@ -18,6 +18,9 @@ function literalString(value) {
 
 export function assignmentString(key, value) {
   if (value === null) return "";
+  if (key === "query") {
+    value = JSON.stringify(value).slice(1, -1);
+  }
   const displayValue = literalString(value);
   return `\n${key} = ${displayValue}`;
 }
