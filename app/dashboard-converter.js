@@ -39,6 +39,13 @@ const EVENT_QUERY = {
   search: (v) => block("search", v, assignmentString),
 };
 
+const METRIC_QUERY = {
+  aggregator: (v) => assignmentString("aggregator", v),
+  query: (v) => assignmentString("query", v),
+  data_source: (v) => assignmentString("data_source", v),
+  name: (v) => assignmentString("name", v),
+};
+
 const COMPUTE_GROUP_BY = {
   metric: (v) => assignmentString("metric", v),
   aggregation: (v) => assignmentString("aggregation", v),
@@ -85,7 +92,8 @@ const REQUEST = {
   order_dir: (v) => assignmentString("order_dir", v),
   process_query: (v) => assignmentString("process_query", v),
   q: (v) => assignmentString("q", v),
-  queries: (v) => convertEventQuery(v),
+  //queries: (v) => convertEventQuery(v),
+  queries: (v) => convertQueries(v),
   response_format: (_) => "", // scalar
   rum_query: (v) => assignmentString("rum_query", v),
   security_query: (v) => assignmentString("security_query", v),
@@ -212,10 +220,18 @@ const GROUP_BY = {
   sort_query: (v) => block("sort_query", v, assignmentString),
 };
 
-function convertEventQuery(value) {
-  return block("query", value, (_) =>
-    blockList(value, "event_query", (k1, v1) => convertFromDefinition(EVENT_QUERY, k1, v1))
-  );
+function convertQueries(value) {
+  return block("query", value, (_) => {
+    if (value[0]["data_source"] === "metrics") {
+      blockList(value, "metric_query", (k1, v1) =>
+        convertFromDefinition(METRIC_QUERY, k1, v1)
+      );
+    } else if (value[0]["data_source"] === "rum") {
+      blockList(value, "event_query", (k1, v1) => convertFromDefinition(EVENT_QUERY, k1, v1));
+    } else {
+      console.log(value[0]["data_source"] + " is not a valid data source");
+    }
+  });
 }
 
 function convertRequests(value) {

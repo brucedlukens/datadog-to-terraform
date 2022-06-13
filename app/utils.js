@@ -58,7 +58,7 @@ export function blockList(array, blockName, contentConverter) {
 export function queryBlockList(array, contentConverter) {
   let result = ["\n"];
   array.forEach((elem) => {
-    result.push(queryBlock("event_query", elem, contentConverter));
+    result.push(queryBlock("metric_query", elem, contentConverter));
   });
   result = result.join("");
   return result;
