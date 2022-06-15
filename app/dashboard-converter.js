@@ -223,11 +223,13 @@ const GROUP_BY = {
 function convertQueries(value) {
   return block("query", value, (_) => {
     if (value[0]["data_source"] === "metrics") {
-      blockList(value, "metric_query", (k1, v1) =>
+      return blockList(value, "metric_query", (k1, v1) =>
         convertFromDefinition(METRIC_QUERY, k1, v1)
       );
     } else if (value[0]["data_source"] === "rum") {
-      blockList(value, "event_query", (k1, v1) => convertFromDefinition(EVENT_QUERY, k1, v1));
+      return blockList(value, "event_query", (k1, v1) =>
+        convertFromDefinition(EVENT_QUERY, k1, v1)
+      );
     } else {
       console.log(value[0]["data_source"] + " is not a valid data source");
     }
